@@ -1,0 +1,32 @@
+﻿version: 2
+
+models:
+  - name: fct_fire_risk
+    description: "Fire-risk score (0-100) and category per region per reading."
+    columns:
+      - name: region
+        tests:
+          - not_null
+      - name: fire_risk_score
+        tests:
+          - not_null
+      - name: fire_risk_level
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Low', 'Moderate', 'High', 'Extreme']
+
+  - name: fct_air_quality
+    description: "Air-quality category and unhealthy flag per region per reading."
+    columns:
+      - name: region
+        tests:
+          - not_null
+      - name: air_quality_category
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Good', 'Moderate', 'Unhealthy for Sensitive Groups', 'Unhealthy', 'Very Unhealthy', 'Hazardous']
+      - name: is_unhealthy
+        tests:
+          - not_null

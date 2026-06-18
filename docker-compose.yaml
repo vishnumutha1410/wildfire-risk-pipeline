@@ -1,0 +1,23 @@
+services: 
+  airflow: 
+    image: apache/airflow:2.10.2-python3.11 
+    container_name: wildfire_airflow 
+    env_file: 
+      - ingestion/.env 
+    environment: 
+      - AIRFLOW__CORE__EXECUTOR=SequentialExecutor 
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=sqlite:////opt/airflow/airflow.db 
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False 
+      - AIRFLOW__WEBSERVER__EXPOSE_CONFIG=True 
+      - _PIP_ADDITIONAL_REQUIREMENTS=requests python-dotenv snowflake-connector-python dbt-snowflake 
+    volumes: 
+      - ./dags:/opt/airflow/dags 
+      - ./ingestion:/opt/airflow/ingestion 
+      - ./wildfire_dbt:/opt/airflow/wildfire_dbt 
+      - ./docker_dbt_profile:/opt/airflow/.dbt 
+      - airflow_db:/opt/airflow 
+    ports: 
+      - "8080:8080" 
+    command: bash -c "airflow db migrate && (airflow scheduler ^&) && airflow webserver" 
+volumes: 
+  airflow_db: 
